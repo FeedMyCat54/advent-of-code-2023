@@ -16,6 +16,7 @@ void main(List<String> arguments) async {
   try {
     await for (var line in lines) {
       sum += advent_of_code.calculateLineNumber(line: line);
+      print(line);
     }
     print('The value is: $sum');
   } catch (e) {

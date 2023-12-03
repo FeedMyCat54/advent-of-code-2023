@@ -1,17 +1,25 @@
-int calculate(List<String> input) {
+(int, int) calculate(List<String> input) {
   int sum = 0;
+  int gearRatioSum = 0;
 
   List<List<String>> inputList = input.map((e) => e.split('')).toList();
 
   for (var (lineIndex, line) in inputList.indexed) {
     for (final (charIndex, char) in line.indexed) {
       if (char != '.' && int.tryParse(char) == null) {
-        sum += findNumbersAroundSymbol(inputList, lineIndex, charIndex);
+        if (char == '*') {
+          final (parts, gears) =
+              findNumbersAroundGear(inputList, lineIndex, charIndex);
+          sum += parts;
+          gearRatioSum += gears;
+        } else {
+          sum += findNumbersAroundSymbol(inputList, lineIndex, charIndex);
+        }
       }
     }
   }
 
-  return sum;
+  return (sum, gearRatioSum);
 }
 
 int findNumbersAroundSymbol(List<List<String>> input, int row, int column) {
@@ -28,6 +36,33 @@ int findNumbersAroundSymbol(List<List<String>> input, int row, int column) {
   }
 
   return sum;
+}
+
+(int, int) findNumbersAroundGear(
+  List<List<String>> input,
+  int row,
+  int column,
+) {
+  int sum = 0;
+  int gearRatio = 0;
+
+  List<int> gearParts = [];
+  for (var i = row - 1; i <= row + 1; i++) {
+    for (var j = column - 1; j <= column + 1; j++) {
+      if (i >= 0 && i < input.length && j >= 0 && j < input[0].length) {
+        if (int.tryParse(input[i][j]) != null) {
+          int wholeNumber = int.parse(takeWholeNumber(input[i], j));
+          gearParts.add(wholeNumber);
+          sum += wholeNumber;
+        }
+      }
+    }
+  }
+
+  if (gearParts.length == 2) {
+    gearRatio = gearParts.reduce((value, element) => value * element);
+  }
+  return (sum, gearRatio);
 }
 
 String takeWholeNumber(List<String> line, int position) {

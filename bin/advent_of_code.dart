@@ -7,4 +7,5 @@ void main(List<String> arguments) {
   List<String> lines = file.readAsLinesSync();
 
   print('The sum of points is: ${calculate(lines)}');
+  print('The sum of cards is: ${calculatePart2(lines)}');
 }

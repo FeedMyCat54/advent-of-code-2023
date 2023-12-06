@@ -7,4 +7,5 @@ void main(List<String> arguments) {
   List<String> lines = file.readAsLinesSync();
 
   print('There are ${calculate(lines)} ways to win the race!');
+  print('There are actually ${calculatePart2(lines)} ways to win the race!');
 }

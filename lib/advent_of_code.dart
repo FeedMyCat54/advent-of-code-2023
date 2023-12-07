@@ -28,6 +28,7 @@ int calculate(List<String> input) {
 enum HandType { high, one, two, three, full, four, five }
 
 enum Card {
+  joker,
   two,
   three,
   four,
@@ -37,7 +38,6 @@ enum Card {
   eight,
   nine,
   ten,
-  jack,
   queen,
   king,
   ace
@@ -69,10 +69,34 @@ int compareHands(List<Card> hand1, List<Card> hand2) {
 
 HandType evaluateHand(List<Card> hand) {
   final Map<Card, int> cards = {};
+  int jokers = 0;
 
   for (var card in hand) {
+    if (card == Card.joker) {
+      jokers++;
+      continue;
+    }
     var count = cards[card];
     cards[card] = count == null ? 1 : count + 1;
+  }
+
+  // Replace the jokers
+  if (jokers > 0) {
+    int mostCopies = cards.values.fold(
+        1,
+        (previousValue, element) =>
+            element > previousValue ? element : previousValue);
+    List<Card> cardsWithMostCopies = cards.entries
+        .where((element) => element.value == mostCopies)
+        .map((e) => e.key)
+        .toList();
+    cardsWithMostCopies.sort((a, b) => a.isGreaterThan(b) ? -1 : 1);
+
+    if (cardsWithMostCopies.isEmpty) {
+      cards[Card.joker] = 5;
+    } else {
+      cards[cardsWithMostCopies[0]] = cards[cardsWithMostCopies[0]]! + jokers;
+    }
   }
 
   int prod = cards.values.reduce((value, element) => value * element);
@@ -118,7 +142,7 @@ List<Card> stringToCardList(String hand) {
         cardList.add(Card.queen);
         break;
       case 'J':
-        cardList.add(Card.jack);
+        cardList.add(Card.joker);
         break;
       case 'T':
         cardList.add(Card.ten);
